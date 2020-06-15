@@ -19,8 +19,8 @@ docker run --privileged --rm -it \
            --volume=/dev:/dev:rw \
            --volume=$JETPACK_HOME/nvidia:/home/jetpack/nvidia:rw \
            --volume=$JETPACK_HOME/Downloads:/home/jetpack/Downloads:rw \
-           --volume=/usr/local/cuda-$CUDA_VERSION:/usr/local/cuda-$CUDA_VERSION \
            --volume=/usr/local/driveworks-$DRIVEWORKS_VERSION:/usr/local/driveworks-$DRIVEWORKS_VERSION \
+           --volume=/opt/CognataStation/:/opt/CognataStation/ \
            --shm-size=1gb \
            --env="XAUTHORITY=${XAUTH}" \
            --env="DISPLAY=${DISPLAY}" \
@@ -28,5 +28,5 @@ docker run --privileged --rm -it \
            --env=QT_X11_NO_MITSHM=1 \
            --net=host \
            -u "jetpack"  \
-           jetpack:latest \
+           systemrunner_docker:latest \
            bash
