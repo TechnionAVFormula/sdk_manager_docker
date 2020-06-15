@@ -30,6 +30,7 @@ RUN useradd -m $USERNAME && \
 RUN yes | unminimize && \
     apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
+        pkg-config \
         curl \
         git \
         gpg \
