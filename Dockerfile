@@ -1,8 +1,10 @@
-FROM ubuntu:18.04
+FROM nvidia/cuda:10.0-base
 
 # ARGUMENTS
 ARG SDK_MANAGER_VERSION=1.1.0-6343
 ARG SDK_MANAGER_DEB=sdkmanager_${SDK_MANAGER_VERSION}_amd64.deb
+ARG MY_CUDA_VERSION=10.2
+ARG DRIVEWORKS_VERSION=2.2
 
 # add new sudo user
 ENV USERNAME jetpack
@@ -61,3 +63,8 @@ RUN sudo apt-get install -f /home/${USERNAME}/${SDK_MANAGER_DEB}
 USER root
 RUN echo "${USERNAME}:${USERNAME}" | chpasswd
 RUN rm /home/${USERNAME}/${SDK_MANAGER_DEB}
+
+# Create links
+RUN rm /usr/local/cuda 
+RUN ln -s /usr/local/cuda-${MY_CUDA_VERSION} /usr/local/cuda 
+RUN ln -s /usr/local/driveworks-${DRIVEWORKS_VERSION} /usr/local/driveworks
