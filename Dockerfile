@@ -173,4 +173,8 @@ RUN sudo rm -rf /home/${USERNAME}/mongo-cxx-driver-r${MONGO_CXX_DRIVER_VERSION}
 RUN rm /home/${USERNAME}/mongo-cxx-driver-r${MONGO_CXX_DRIVER_VERSION}.tar.gz
 
 # Copy driveworks pkgconfig
-COPY --chown=jetpack:jetpack /usr/lib/driveworks.pc /usr/lib/
+COPY --chown=jetpack:jetpack driveworks.pc /usr/lib/pkgconfig
+
+# nvidia-container-runtime
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES video,compute,utility

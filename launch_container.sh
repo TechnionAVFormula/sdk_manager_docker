@@ -13,7 +13,6 @@ CUDA_VERSION=10.2
 DRIVEWORKS_VERSION=2.2
 
 docker run --privileged --rm -it \
-           --gpus all \
            --volume=$XSOCK:$XSOCK:rw \
            --volume=$XAUTH:$XAUTH:rw \
            --volume=/dev:/dev:rw \
@@ -28,6 +27,7 @@ docker run --privileged --rm -it \
            --env=TERM=xterm-256color \
            --env=QT_X11_NO_MITSHM=1 \
            --net=host \
+           --runtime nvidia \
            -u "jetpack"  \
            systemrunner_docker:latest \
            bash

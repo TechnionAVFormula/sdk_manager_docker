@@ -13,6 +13,9 @@ And, please put the package of NVIDIA SDK Manager in the same directory as the D
 This time, I used `sdkmanager_1.1.0-6343_amd64.deb`.
 
 ### Build Docker image
+Put the sdkmanager deb in the same directory as the Dockerfile
+Put the driveworks.pc in the same directory as the Dockerfile (should be in /usr/lib/pkgconfig/)
+
 ```
 $ docker build -t jetpack .
 ```
