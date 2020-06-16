@@ -48,6 +48,7 @@ RUN yes | unminimize && \
         libxtst6 \
         net-tools \
         python3-pip \
+        python3-dev \
         sshpass \
         libssl-dev \
         swig \

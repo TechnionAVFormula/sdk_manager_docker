@@ -19,6 +19,7 @@ docker run --privileged --rm -it \
            --volume=/dev:/dev:rw \
            --volume=$JETPACK_HOME/nvidia:/home/jetpack/nvidia:rw \
            --volume=$JETPACK_HOME/Downloads:/home/jetpack/Downloads:rw \
+           --volume=$JETPACK_HOME/systemrunner:/home/jetpack/systemrunner:rw \
            --volume=/usr/local/driveworks-$DRIVEWORKS_VERSION:/usr/local/driveworks-$DRIVEWORKS_VERSION \
            --volume=/opt/CognataStation/:/opt/CognataStation/ \
            --shm-size=1gb \
