@@ -171,3 +171,6 @@ RUN sudo make install
 WORKDIR /home/${USERNAME}
 RUN sudo rm -rf /home/${USERNAME}/mongo-cxx-driver-r${MONGO_CXX_DRIVER_VERSION}
 RUN rm /home/${USERNAME}/mongo-cxx-driver-r${MONGO_CXX_DRIVER_VERSION}.tar.gz
+
+# Copy driveworks pkgconfig
+COPY --chown=jetpack:jetpack /usr/lib/driveworks.pc /usr/lib/
