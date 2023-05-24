@@ -17,25 +17,25 @@ Put the sdkmanager deb in the same directory as the Dockerfile
 Put the driveworks.pc in the same directory as the Dockerfile (should be in /usr/lib/pkgconfig/)
 
 ```
-$ docker build -t jetpack .
+ docker build -t jetpack .
 ```
 
 To build a Docker image with a specific SDK Manager version override the ``SDK_MANAGER_VERSION`` variable in the Docker command line
 
 ```
-$ docker build --build-arg SDK_MANAGER_VERSION=1.1.0-6343 -t jetpack .
+ docker build --build-arg SDK_MANAGER_VERSION=1.1.0-6343 -t jetpack .
 ```
 
 ### Create Docker container
 ```
-$ ./launch_container.sh
+ ./launch_container.sh
 ```
 
 ## Launch NVIDIA SDK Manager
 Please launch NVIDIA SDK Manager by the following command.
 
 ```
-$ sdkmanager
+sdkmanager
 ```
 
 You need type user password during setup of NVIDIA SDK Manager.  
