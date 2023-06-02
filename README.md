@@ -19,7 +19,20 @@ NVIDIA released official Docker image(<https://docs.nvidia.com/sdk-manager/docke
 
 Please download the package of NVIDIA SDK Manager from <https://developer.nvidia.com/nvidia-sdk-manager>.  
 And, please put the package of NVIDIA SDK Manager in the same directory as the Dockerfile.  
-This time, I used `sdkmanager_1.8.0-10363_amd64.deb`.
+This time, I used `sdkmanager_1.9.2-10899_amd64.deb`.
+
+### Install Driveworks using the SDK Manager
+
+The version currently used is `driveworks-2.2` Make sure the sdk is located at `/usr/local/driveworks-2.2`
+
+### Install Systemrunner 
+
+If you are a member of TechnionAVFormula (yes you!) download the respoistory using 
+
+```
+git clone https://gitlab.com/technionavformula/systemrunner.git --recurse-submodules
+```
+and place it in your docker user's home dir.
 
 ### Build Docker image
 Put the sdkmanager deb in the same directory as the Dockerfile
