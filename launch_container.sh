@@ -21,7 +21,7 @@ docker run --privileged --rm -it \
            --volume=$JETPACK_HOME/systemrunner:/home/jetpack/systemrunner:rw \
            --volume=/usr/local/driveworks-$DRIVEWORKS_VERSION:/usr/local/driveworks-$DRIVEWORKS_VERSION \
            --volume=/opt/CognataStation/:/opt/CognataStation/ \
-           --shm-size=1gb \
+	   --shm-size=1gb \
            --env="XAUTHORITY=${XAUTH}" \
            --env="DISPLAY=${DISPLAY}" \
            --env=TERM=xterm-256color \
@@ -30,4 +30,4 @@ docker run --privileged --rm -it \
            --runtime nvidia \
            -u "jetpack"  \
            systemrunner_docker:latest \
-           bash
+	   bash
