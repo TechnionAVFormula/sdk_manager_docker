@@ -2,7 +2,7 @@ FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04
 
 # ARGUMENTS
 ARG USERNAME=jetpack
-ARG SDK_MANAGER_VERSION=1.1.0-6343
+ARG SDK_MANAGER_VERSION=1.9.2-10899
 ARG SDK_MANAGER_DEB=sdkmanager_${SDK_MANAGER_VERSION}_amd64.deb
 ARG DRIVEWORKS_VERSION=2.2
 ARG PROTOBUF_VERSION=3.8.0
@@ -11,6 +11,8 @@ ARG CMAKE_VERSION=3.16.4
 ARG MONGO_C_DRIVER_VERSION=1.16.2
 ARG MONGO_CXX_DRIVER_VERSION=3.5.0
 ARG ZSTD_VERSION=1.4.5
+ARG GID=1000
+ARG UID=1000
 
 # add new sudo user
 ENV USERNAME jetpack
@@ -23,8 +25,12 @@ RUN useradd -m $USERNAME && \
         echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/$USERNAME && \
         chmod 0440 /etc/sudoers.d/$USERNAME && \
         # Replace 1000 with your user/group id
-        usermod  --uid 1000 $USERNAME && \
-        groupmod --gid 1000 $USERNAME
+        usermod  --uid ${UID} $USERNAME && \
+        groupmod --gid ${GID} $USERNAME
+
+RUN rm /etc/apt/sources.list.d/cuda.list
+RUN rm /etc/apt/sources.list.d/nvidia-ml.list
+
 
 # install package
 RUN yes | unminimize && \
@@ -52,30 +58,32 @@ RUN yes | unminimize && \
         sshpass \
         libssl-dev \
         swig \
+        chromium-browser \
+        qemu-user-static \
+        binfmt-support \
+        libxshmfence1 \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # set locale
-RUN locale-gen en_US.UTF-8  
-ENV LANG en_US.UTF-8  
-ENV LANGUAGE en_US:en  
+RUN locale-gen en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
+# make links
+RUN ln -s /usr/local/driveworks-${DRIVEWORKS_VERSION} /usr/local/driveworks
+
 # install SDK Manager
 USER jetpack
-COPY ${SDK_MANAGER_DEB} /home/${USERNAME}/
+COPY --chown=jetpack:jetpack ${SDK_MANAGER_DEB} /home/${USERNAME}/
 WORKDIR /home/${USERNAME}
 RUN sudo apt-get install -f /home/${USERNAME}/${SDK_MANAGER_DEB}
-
-USER root
-RUN echo "${USERNAME}:${USERNAME}" | chpasswd
 RUN rm /home/${USERNAME}/${SDK_MANAGER_DEB}
 
-# Create links
-RUN ln -s /usr/local/driveworks-${DRIVEWORKS_VERSION} /usr/local/driveworks
 
 # Install Cmake
 
@@ -107,8 +115,7 @@ WORKDIR /home/${USERNAME}
 RUN sudo rm -rf /home/${USERNAME}/protobuf-${PROTOBUF_VERSION}
 RUN rm /home/${USERNAME}/protobuf-all-${PROTOBUF_VERSION}.tar.gz
 
-RUN pip3 install protobuf
-
+RUN pip3 install protobuf==3.19.6
 # Install spdlog
 USER jetpack
 ADD --chown=jetpack:jetpack https://github.com/gabime/spdlog/archive/v${SPDLOG_VERSION}.tar.gz  /home/${USERNAME}/spdlog-${SPDLOG_VERSION}.tar.gz
