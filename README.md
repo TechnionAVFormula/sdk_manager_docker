@@ -11,7 +11,7 @@ NVIDIA released official Docker image(<https://docs.nvidia.com/sdk-manager/docke
 ## Requirements
 
 * Docker
-* Nvidia's container tool-kit [https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html](guide)
+* Nvidia's container tool-kit [installation guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
 
 ## Preparation
 
