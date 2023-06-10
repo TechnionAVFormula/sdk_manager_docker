@@ -53,15 +53,26 @@ RUN yes | unminimize && \
         libxss1 \
         libxtst6 \
         net-tools \
+        python3.7 \ 
         python3-pip \
         python3-dev \
+        python3-setuptools\
         sshpass \
         libssl-dev \
         swig \
+        libx11-dev\
+         libxcursor-dev\
+         libxrandr-dev \
+         libxinerama-dev \ 
         chromium-browser \
         qemu-user-static \
         binfmt-support \
         libxshmfence1 \
+        autoconf \
+        automake \
+        libtool \
+        unzip \
+        libglu1-mesa-dev\
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -101,21 +112,75 @@ RUN sudo rm -rf /home/${USERNAME}/cmake-${CMAKE_VERSION}
 RUN rm /home/${USERNAME}/cmake-${CMAKE_VERSION}.tar.gz
 
 # Install protobuf
+# USER jetpack
+# ADD --chown=jetpack:jetpack https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protobuf-all-${PROTOBUF_VERSION}.tar.gz /home/${USERNAME}/
+# WORKDIR /home/${USERNAME}
+# RUN tar -xf /home/${USERNAME}/protobuf-all-${PROTOBUF_VERSION}.tar.gz
+# WORKDIR /home/${USERNAME}/protobuf-${PROTOBUF_VERSION}
+# RUN /home/${USERNAME}/protobuf-${PROTOBUF_VERSION}/configure
+# RUN make
+# RUN sudo make install
+# Install MongoDB
+
+## Instal mongo c driver
 USER jetpack
-ADD --chown=jetpack:jetpack https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protobuf-all-${PROTOBUF_VERSION}.tar.gz /home/${USERNAME}/
+ADD --chown=jetpack:jetpack https://github.com/mongodb/mongo-c-driver/releases/download/${MONGO_C_DRIVER_VERSION}/mongo-c-driver-${MONGO_C_DRIVER_VERSION}.tar.gz  /home/${USERNAME}/
 WORKDIR /home/${USERNAME}
-RUN tar -xf /home/${USERNAME}/protobuf-all-${PROTOBUF_VERSION}.tar.gz
-WORKDIR /home/${USERNAME}/protobuf-${PROTOBUF_VERSION}
-RUN /home/${USERNAME}/protobuf-${PROTOBUF_VERSION}/configure
+RUN tar -xf /home/${USERNAME}/mongo-c-driver-${MONGO_C_DRIVER_VERSION}.tar.gz
+RUN mkdir /home/${USERNAME}/mongo-c-driver-${MONGO_C_DRIVER_VERSION}/_build
+WORKDIR /home/${USERNAME}/mongo-c-driver-${MONGO_C_DRIVER_VERSION}/_build
+RUN cmake .. -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF
 RUN make
 RUN sudo make install
-RUN sudo ldconfig
 
 WORKDIR /home/${USERNAME}
-RUN sudo rm -rf /home/${USERNAME}/protobuf-${PROTOBUF_VERSION}
-RUN rm /home/${USERNAME}/protobuf-all-${PROTOBUF_VERSION}.tar.gz
+RUN sudo rm -rf /home/${USERNAME}/mongo-c-driver-${MONGO_C_DRIVER_VERSION}
+RUN rm /home/${USERNAME}/mongo-c-driver-${MONGO_C_DRIVER_VERSION}.tar.gz
 
-RUN pip3 install protobuf==3.19.6
+## Instal mongo cxx driver
+USER jetpack
+ADD --chown=jetpack:jetpack https://github.com/mongodb/mongo-cxx-driver/releases/download/r${MONGO_CXX_DRIVER_VERSION}/mongo-cxx-driver-r${MONGO_CXX_DRIVER_VERSION}.tar.gz  /home/${USERNAME}/
+WORKDIR /home/${USERNAME}
+RUN tar -xf /home/${USERNAME}/mongo-cxx-driver-r${MONGO_CXX_DRIVER_VERSION}.tar.gz
+RUN mkdir /home/${USERNAME}/mongo-cxx-driver-r${MONGO_CXX_DRIVER_VERSION}/_build
+WORKDIR /home/${USERNAME}/mongo-cxx-driver-r${MONGO_CXX_DRIVER_VERSION}/_build
+RUN cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_AND_STATIC_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local
+RUN sudo make EP_mnmlstc_core
+RUN make
+RUN sudo make install
+
+
+USER jetpack
+# ADD --chown=jetpack:jetpack https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protobuf-all-${PROTOBUF_VERSION}.tar.gz /home/${USERNAME}/
+# WORKDIR /tmp/protobuf
+# RUN sudo curl -o google-protobuf.tar.gz  -LJO https://github.com/google/protobuf/tarball/v3.8.0 
+# RUN sudo tar -xzvf google-protobuf.tar.gz
+# RUN cd protocolbuffers*
+# RUN sudo ./autogen.sh
+# RUN sudo ./configure --prefix=/usr/ CXXFLAGS=-fPIC
+# RUN make 
+# RUN sudo make install
+# RUN rm -rf /tmp/protobuf/*
+
+# WORKDIR /home/${USERNAME}
+# RUN tar -xf /home/${USERNAME}/protobuf-all-${PROTOBUF_VERSION}.tar.gz
+# WORKDIR /home/${USERNAME}/protobuf-${PROTOBUF_VERSION}
+# RUN /home/${USERNAME}/protobuf-${PROTOBUF_VERSION}/configure
+# RUN make
+# RUN sudo make install
+ADD --chown=jetpack:jetpack install-protobuf.sh /home/${USERNAME}/
+WORKDIR /home/${USERNAME}
+RUN sudo chmod +x install-protobuf.sh
+RUN sudo ./install-protobuf.sh
+
+RUN sudo ldconfig
+
+# WORKDIR /home/${USERNAME}
+# RUN sudo rm -rf /home/${USERNAME}/protobuf-${PROTOBUF_VERSION}
+# RUN rm /home/${USERNAME}/protobuf-all-${PROTOBUF_VERSION}.tar.gz
+
+RUN pip3 install protobuf==3.8.0
+RUN sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 2
 # Install spdlog
 USER jetpack
 ADD --chown=jetpack:jetpack https://github.com/gabime/spdlog/archive/v${SPDLOG_VERSION}.tar.gz  /home/${USERNAME}/spdlog-${SPDLOG_VERSION}.tar.gz
@@ -146,34 +211,7 @@ WORKDIR /home/${USERNAME}
 RUN sudo rm -rf /home/${USERNAME}/zstd-${ZSTD_VERSION}
 RUN rm /home/${USERNAME}/zstd-${ZSTD_VERSION}.tar.gz
 
-# Install MongoDB
 
-## Instal mongo c driver
-USER jetpack
-ADD --chown=jetpack:jetpack https://github.com/mongodb/mongo-c-driver/releases/download/${MONGO_C_DRIVER_VERSION}/mongo-c-driver-${MONGO_C_DRIVER_VERSION}.tar.gz  /home/${USERNAME}/
-WORKDIR /home/${USERNAME}
-RUN tar -xf /home/${USERNAME}/mongo-c-driver-${MONGO_C_DRIVER_VERSION}.tar.gz
-RUN mkdir /home/${USERNAME}/mongo-c-driver-${MONGO_C_DRIVER_VERSION}/_build
-WORKDIR /home/${USERNAME}/mongo-c-driver-${MONGO_C_DRIVER_VERSION}/_build
-RUN cmake .. -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF
-RUN make
-RUN sudo make install
-
-WORKDIR /home/${USERNAME}
-RUN sudo rm -rf /home/${USERNAME}/mongo-c-driver-${MONGO_C_DRIVER_VERSION}
-RUN rm /home/${USERNAME}/mongo-c-driver-${MONGO_C_DRIVER_VERSION}.tar.gz
-
-## Instal mongo cxx driver
-USER jetpack
-ADD --chown=jetpack:jetpack https://github.com/mongodb/mongo-cxx-driver/releases/download/r${MONGO_CXX_DRIVER_VERSION}/mongo-cxx-driver-r${MONGO_CXX_DRIVER_VERSION}.tar.gz  /home/${USERNAME}/
-WORKDIR /home/${USERNAME}
-RUN tar -xf /home/${USERNAME}/mongo-cxx-driver-r${MONGO_CXX_DRIVER_VERSION}.tar.gz
-RUN mkdir /home/${USERNAME}/mongo-cxx-driver-r${MONGO_CXX_DRIVER_VERSION}/_build
-WORKDIR /home/${USERNAME}/mongo-cxx-driver-r${MONGO_CXX_DRIVER_VERSION}/_build
-RUN cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_AND_STATIC_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr/local
-RUN sudo make EP_mnmlstc_core
-RUN make
-RUN sudo make install
 
 WORKDIR /home/${USERNAME}
 RUN sudo rm -rf /home/${USERNAME}/mongo-cxx-driver-r${MONGO_CXX_DRIVER_VERSION}
