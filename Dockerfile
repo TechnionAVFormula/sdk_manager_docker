@@ -73,7 +73,7 @@ RUN yes | unminimize && \
         libtool \
         unzip \
         libglu1-mesa-dev\
-        && \
+	    can-utils &&\
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -149,6 +149,12 @@ RUN sudo make EP_mnmlstc_core
 RUN make
 RUN sudo make install
 
+RUN git clone https://github.com/catchorg/Catch2.git &&\
+    cd Catch2 &&\
+    cmake -Bbuild -H. -DBUILD_TESTING=OFF &&\
+    sudo cmake --build build/ --target install &&\
+    cd - &&\
+    rm -rf Catch2
 
 USER jetpack
 # ADD --chown=jetpack:jetpack https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_VERSION}/protobuf-all-${PROTOBUF_VERSION}.tar.gz /home/${USERNAME}/
